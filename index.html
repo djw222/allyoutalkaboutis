@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ALL YOU TALK ABOUT IS MONEY - The Journey</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #1a0000 0%, #330000 50%, #000000 100%);
+      color: white;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      transition: background 0.8s ease;
+    }
+
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 1s ease;
+    }
+
+    .loading-overlay.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loader {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top: 3px solid #ff0000;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0,0,0,0.9);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      transition: transform 0.3s ease;
+    }
+
+    .nav.hidden {
+      transform: translateY(-100%);
+    }
+
+    .nav-logo {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #ff0000;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      transition: color 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      color: #ff0000;
+    }
+
+    .hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      background: radial-gradient(ellipse at center, rgba(255,0,0,0.1) 0%, transparent 70%);
+    }
+
+    .hero h1 {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(45deg, #ff0000, #ffffff, #ff0000);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradient-shift 3s ease-in-out infinite;
+    }
+
+    @keyframes gradient-shift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .hero p {
+      font-size: 1.5rem;
+      max-width: 600px;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+
+    .cta-button {
+      padding: 1rem 2rem;
+      background: linear-gradient(45deg, #ff0000, #cc0000);
+      border: none;
+      color: white;
+      font-size: 1.1rem;
+      cursor: pointer;
+      border-radius: 50px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(255,0,0,0.3);
+    }
+
+    .timeline {
+      padding: 5rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .timeline h2 {
+      text-align: center;
+      font-size: 3rem;
+      margin-bottom: 3rem;
+      color: #ff0000;
+    }
+
+    .phases {
+      display: grid;
+      gap: 3rem;
+    }
+
+    .phase {
+      background: rgba(255,255,255,0.05);
+      padding: 2rem;
+      border-radius: 15px;
+      border-left: 4px solid #ff0000;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 0.6s ease;
+    }
+
+    .phase h3 {
+      color: #ff0000;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .phase-description {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+
+    .weeks {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .week-card {
+      background: rgba(0,0,0,0.3);
+      padding: 1.5rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255,0,0,0.3);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .week-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      border-color: #ff0000;
+      box-shadow: 0 15px 30px rgba(255,0,0,0.2);
+    }
+
+    .week-number {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #ff0000;
+      margin-bottom: 0.5rem;
+    }
+
+    .week-date {
+      opacity: 0.7;
+      margin-bottom: 1rem;
+    }
+
+    .songs-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .songs-list li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .songs-list li:last-child {
+      border-bottom: none;
+    }
+
+    .calendar-section {
+      background: rgba(0,0,0,0.5);
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .calendar-section h2 {
+      font-size: 2.5rem;
+      color: #ff0000;
+      margin-bottom: 2rem;
+    }
+
+    .calendar-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .calendar-btn {
+      padding: 0.8rem 1.5rem;
+      background: rgba(255,0,0,0.2);
+      border: 1px solid #ff0000;
+      color: white;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .calendar-btn:hover {
+      background: rgba(255,0,0,0.4);
+      transform: translateY(-2px);
+    }
+
+    .download-all-btn {
+      padding: 1rem 2rem;
+      background: linear-gradient(45deg, #ff0000, #cc0000);
+      border: none;
+      color: white;
+      font-size: 1.1rem;
+      cursor: pointer;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+    }
+
+    .download-all-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(255,0,0,0.3);
+    }
+
+    .story-section {
+      padding: 5rem 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .story-section h2 {
+      font-size: 2.5rem;
+      color: #ff0000;
+      margin-bottom: 2rem;
+    }
+
+    .story-content {
+      font-size: 1.2rem;
+      line-height: 1.8;
+      opacity: 0.9;
+    }
+
+    @keyframes ripple {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      
+      .nav-links {
+        gap: 1rem;
+      }
+      
+      .weeks {
+        grid-template-columns: 1fr;
+      }
+      
+      .calendar-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loading">
+    <div class="loader"></div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="nav-logo">THE JOURNEY</div>
+    <ul class="nav-links">
+      <li><a href="#hero" class="nav-link">Home</a></li>
+      <li><a href="#timeline" class="nav-link">Timeline</a></li>
+      <li><a href="#calendar" class="nav-link">Calendar</a></li>
+      <li><a href="#story" class="nav-link">Story</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <h1>ALL YOU TALK ABOUT IS MONEY</h1>
+    <p>A musical journey spanning 8 months, 32 weeks, and countless hours of creative expression. From September 2025 to April 2026, witness the evolution of an artist's vision.</p>
+    <a href="#timeline" class="cta-button">Explore The Journey</a>
+  </section>
+
+  <!-- Timeline -->
+  <section class="timeline" id="timeline">
+    <h2>The Journey Timeline</h2>
+    <div class="phases">
+
+      <!-- Phase 1: The Grind -->
+      <div class="phase">
+        <h3>Phase 1: The Grind (September - October 2025)</h3>
+        <p class="phase-description">The foundation. Raw energy and relentless dedication marked the beginning of this creative odyssey.</p>
+        <div class="weeks">
+          <div class="week-card">
+            <div class="week-number">Week 1</div>
+            <div class="week-date">September 5, 2025</div>
+            <ul class="songs-list">
+              <li>♪ No retirement</li>
+              <li>♪ Locked in</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 2</div>
+            <div class="week-date">September 12, 2025</div>
+            <ul class="songs-list">
+              <li>♪ Autopilot</li>
+              <li>♪ All you talk about is money</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 3</div>
+            <div class="week-date">September 19, 2025</div>
+            <ul class="songs-list">
+              <li>♪ Numb</li>
+              <li>♪ Nobody cares</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 4</div>
+            <div class="week-date">September 26, 2025</div>
+            <ul class="songs-list">
+              <li>♪ Hater</li>
+              <li>♪ Running</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 5</div>
+            <div class="week-date">October 3, 2025</div>
+            <ul class="songs-list">
+              <li>♪ Can't stop</li>
+              <li>♪ Move on</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 6</div>
+            <div class="week-date">October 10, 2025</div>
+            <ul class="songs-list">
+              <li>♪ Obsessed</li>
+              <li>♪ Focus</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 7</div>
+            <div class="week-date">October 17, 2025</div>
+            <ul class="songs-list">
+              <li>♪ Push</li>
+              <li>♪ Never enough</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 8</div>
+            <div class="week-date">October 24, 2025</div>
+            <ul class="songs-list">
+              <li>♪ Rise</li>
+              <li>♪ Grind never stops</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 2: The Struggle -->
+      <div class="phase">
+        <h3>Phase 2: The Struggle (November - December 2025)</h3>
+        <p class="phase-description">Testing times. The weight of ambition met the reality of creation, forging resilience through hardship.</p>
+        <div class="weeks">
+          <div class="week-card">
+            <div class="week-number">Week 9</div>
+            <div class="week-date">October 31, 2025</div>
+            <ul class="songs-list">
+              <li>♪ Broken dreams</li>
+              <li>♪ Lost</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 10</div>
+            <div class="week-date">November 7, 2025</div>
+            <ul class="songs-list">
+              <li>♪ Empty</li>
+              <li>♪ Fighting shadows</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 11</div>
+            <div class="week-date">November 14, 2025</div>
+            <ul class="songs-list">
+              <li>♪ Pain</li>
+              <li>♪ Doubt</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 12</div>
+            <div class="week-date">November 21, 2025</div>
+            <ul class="songs-list">
+              <li>♪ Pressure</li>
+              <li>♪ Breaking point</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 13</div>
+            <div class="week-date">November 28, 2025</div>
+            <ul class="songs-list">
+              <li>♪ Survive</li>
+              <li>♪ Hold on</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 14</div>
+            <div class="week-date">December 5, 2025</div>
+            <ul class="songs-list">
+              <li>♪ Dark nights</li>
+              <li>♪ Searching</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 15</div>
+            <div class="week-date">December 12, 2025</div>
+            <ul class="songs-list">
+              <li>♪ Breakthrough</li>
+              <li>♪ Light</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 16</div>
+            <div class="week-date">December 19, 2025</div>
+            <ul class="songs-list">
+              <li>♪ Overcome</li>
+              <li>♪ Stronger</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 3: The Growth -->
+      <div class="phase">
+        <h3>Phase 3: The Growth (January - February 2026)</h3>
+        <p class="phase-description">Evolution in motion. Skills sharpened, vision clarified, and artistry matured through dedicated practice.</p>
+        <div class="weeks">
+          <div class="week-card">
+            <div class="week-number">Week 17</div>
+            <div class="week-date">December 26, 2025</div>
+            <ul class="songs-list">
+              <li>♪ New year</li>
+              <li>♪ Fresh start</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 18</div>
+            <div class="week-date">January 2, 2026</div>
+            <ul class="songs-list">
+              <li>♪ Momentum</li>
+              <li>♪ Building up</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 19</div>
+            <div class="week-date">January 9, 2026</div>
+            <ul class="songs-list">
+              <li>♪ Learning</li>
+              <li>♪ Adapting</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 20</div>
+            <div class="week-date">January 16, 2026</div>
+            <ul class="songs-list">
+              <li>♪ Progress</li>
+              <li>♪ Forward</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 21</div>
+            <div class="week-date">January 23, 2026</div>
+            <ul class="songs-list">
+              <li>♪ Elevation</li>
+              <li>♪ Higher</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 22</div>
+            <div class="week-date">January 30, 2026</div>
+            <ul class="songs-list">
+              <li>♪ Refined</li>
+              <li>♪ Polished</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 23</div>
+            <div class="week-date">February 6, 2026</div>
+            <ul class="songs-list">
+              <li>♪ Love the craft</li>
+              <li>♪ Passion</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 24</div>
+            <div class="week-date">February 13, 2026</div>
+            <ul class="songs-list">
+              <li>♪ Mastery</li>
+              <li>♪ Excellence</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 4: The Balance -->
+      <div class="phase">
+        <h3>Phase 4: The Balance (March - April 2026)</h3>
+        <p class="phase-description">Harmony achieved. The culmination of months of work, finding equilibrium between ambition and artistry.</p>
+        <div class="weeks">
+          <div class="week-card">
+            <div class="week-number">Week 25</div>
+            <div class="week-date">February 20, 2026</div>
+            <ul class="songs-list">
+              <li>♪ Harmony</li>
+              <li>♪ Balance</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 26</div>
+            <div class="week-date">February 27, 2026</div>
+            <ul class="songs-list">
+              <li>♪ Zen</li>
+              <li>♪ Peace</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 27</div>
+            <div class="week-date">March 6, 2026</div>
+            <ul class="songs-list">
+              <li>♪ Flow state</li>
+              <li>♪ Natural</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 28</div>
+            <div class="week-date">March 13, 2026</div>
+            <ul class="songs-list">
+              <li>♪ Spring</li>
+              <li>♪ Renewal</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 29</div>
+            <div class="week-date">March 20, 2026</div>
+            <ul class="songs-list">
+              <li>♪ Wisdom</li>
+              <li>♪ Understanding</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 30</div>
+            <div class="week-date">March 27, 2026</div>
+            <ul class="songs-list">
+              <li>♪ Complete</li>
+              <li>♪ Whole</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 31</div>
+            <div class="week-date">April 3, 2026</div>
+            <ul class="songs-list">
+              <li>♪ Legacy</li>
+              <li>♪ Impact</li>
+            </ul>
+          </div>
+          <div class="week-card">
+            <div class="week-number">Week 32</div>
+            <div class="week-date">April 10, 2026</div>
+            <ul class="songs-list">
+              <li>♪ Take it back</li>
+              <li>♪ The finale</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Calendar Download Section -->
+  <div class="calendar-section" id="calendar">
+    <h2>Download Your Journey Calendar</h2>
+    <p>Get personalized calendars for each month of the journey</p>
+    <div class="calendar-buttons">
+      <button class="calendar-btn" onclick="downloadCalendar('september-2025')">September 2025</button>
+      <button class="calendar-btn" onclick="downloadCalendar('october-2025')">October 2025</button>
+      <button class="calendar-btn" onclick="downloadCalendar('november-2025')">November 2025</button>
+      <button class="calendar-btn" onclick="downloadCalendar('december-2025')">December 2025</button>
+      <button class="calendar-btn" onclick="downloadCalendar('january-2026')">January 2026</button>
+      <button class="calendar-btn" onclick="downloadCalendar('february-2026')">February 2026</button>
+      <button class="calendar-btn" onclick="downloadCalendar('march-2026')">March 2026</button>
+      <button class="calendar-btn" onclick="downloadCalendar('april-2026')">April 2026</button>
+    </div>
+    <button class="download-all-btn" onclick="downloadFullCalendar()">Download Complete Journey Calendar</button>
+  </div>
+
+  <!-- Story Section -->
+  <div class="story-section" id="story">
+    <h2>The Story Behind The Journey</h2>
+    <div class="story-content">
+      <p>What started as a simple commitment became an epic 32-week musical odyssey. Every Friday, without fail, new tracks would drop - a testament to unwavering dedication and the relentless pursuit of artistic excellence.</p>
+      
+      <p>From the raw energy of "The Grind" to the hard-won wisdom of "The Balance," this journey represents more than just music. It's a chronicle of growth, resilience, and the transformative power of consistent creative practice.</p>
+      
+      <p>Each phase brought its own challenges and revelations. The struggle was real, but so was the growth that emerged from it. This is more than an album - it's a year of life, distilled into sound.</p>
+    </div>
+  </div>
+
+  <script>
+    // Page interactions
+    window.addEventListener('load', () => {
+      setTimeout(() => document.getElementById('loading').classList.add('fade-out'), 1500);
+    });
+
+    // Smooth scrolling navigation
+    document.querySelectorAll('.nav-link, .cta-button').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) target.scrollIntoView({behavior:'smooth'});
+      });
+    });
+
+    // Hide/show navigation on scroll
+    let lastScroll = 0;
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      let y = window.scrollY;
+      nav.classList.toggle('hidden', y > lastScroll && y > 100);
+      lastScroll = y;
+    });
+
+    // Intersection Observer for phase animations
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { 
+        if(e.isIntersecting){ 
+          e.target.style.opacity = 1; 
+          e.target.style.transform = 'translateY(0)'; 
+        } 
+      });
+    }, {threshold: 0.1});
+
+    document.querySelectorAll('.phase').forEach((p, i) => { 
+      p.style.animationDelay = `${i * 0.2}s`; 
+      observer.observe(p); 
+    });
+
+    // Week card interactions
+    document.querySelectorAll('.week-card').forEach(card => {
+      card.addEventListener('mouseenter', () => card.style.transform = 'translateY(-10px) scale(1.02)');
+      card.addEventListener('mouseleave', () => card.style.transform = 'translateY(0) scale(1)');
+      card.addEventListener('click', function(){
+        const r = document.createElement('div');
+        r.style.cssText = "position:absolute;border-radius:50%;background:rgba(255,0,0,0.3);transform:scale(0);animation:ripple .6s linear;left:50%;top:50%;width:20px;height:20px;margin-left:-10px;margin-top:-10px;pointer-events:none;";
+        this.appendChild(r); 
+        setTimeout(() => r.remove(), 600);
+      });
+    });
+
+    // Dynamic background based on scroll
+    window.addEventListener('scroll', () => {
+      const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+      let bg;
+      if(pct < 25) bg = "linear-gradient(135deg,#1a0000 0%,#330000 50%,#000000 100%)";
+      else if(pct < 50) bg = "linear-gradient(135deg,#330000 0%,#4d0000 50%,#1a0000 100%)";
+      else if(pct < 75) bg = "linear-gradient(135deg,#4d0000 0%,#660000 50%,#330000 100%)";
+      else bg = "linear-gradient(135deg,#660000 0%,#800000 50%,#4d0000 100%)";
+      document.body.style.background = bg;
+    });
+
+    // Release data for calendar generation
+    const releaseData = {
+      "september-2025": [
+        {date: 5, songs: ["No retirement", "Locked in"], phase: "The Grind"},
+        {date: 12, songs: ["Autopilot", "All you talk about is money"], phase: "The Grind"},
+        {date: 19, songs: ["Overcome", "Stronger"], phase: "The Struggle"},
+        {date: 26, songs: ["New year", "Fresh start"], phase: "The Growth"}
+      ],
+      "january-2026": [
+        {date: 2, songs: ["Momentum", "Building up"], phase: "The Growth"},
+        {date: 9, songs: ["Learning", "Adapting"], phase: "The Growth"},
+        {date: 16, songs: ["Progress", "Forward"], phase: "The Growth"},
+        {date: 23, songs: ["Elevation", "Higher"], phase: "The Growth"},
+        {date: 30, songs: ["Refined", "Polished"], phase: "The Growth"}
+      ],
+      "february-2026": [
+        {date: 6, songs: ["Love the craft", "Passion"], phase: "The Growth"},
+        {date: 13, songs: ["Mastery", "Excellence"], phase: "The Growth"},
+        {date: 20, songs: ["Harmony", "Balance"], phase: "The Balance"},
+        {date: 27, songs: ["Zen", "Peace"], phase: "The Balance"}
+      ],
+      "march-2026": [
+        {date: 6, songs: ["Flow state", "Natural"], phase: "The Balance"},
+        {date: 13, songs: ["Spring", "Renewal"], phase: "The Balance"},
+        {date: 20, songs: ["Wisdom", "Understanding"], phase: "The Balance"},
+        {date: 27, songs: ["Complete", "Whole"], phase: "The Balance"}
+      ],
+      "april-2026": [
+        {date: 3, songs: ["Legacy", "Impact"], phase: "The Balance"},
+        {date: 10, songs: ["Take it back", "The finale"], phase: "The Balance"}
+      ]
+    };
+
+    // Calendar generation functions
+    function generateCalendar(monthData, monthName, year) {
+      const [month, yearNum] = monthName.split('-');
+      const monthNames = {
+        'september': 'September',
+        'october': 'October', 
+        'november': 'November',
+        'december': 'December',
+        'january': 'January',
+        'february': 'February',
+        'march': 'March',
+        'april': 'April'
+      };
+
+      let icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//ALL YOU TALK ABOUT IS MONEY//Journey Calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:${monthNames[month]} ${yearNum} - Musical Journey
+X-WR-CALDESC:Songs from the ${monthNames[month]} ${yearNum} phase
+
+`;
+
+      monthData.forEach(release => {
+        const date = new Date(parseInt(yearNum), 
+          Object.keys(monthNames).indexOf(month), 
+          release.date);
+        const dateStr = date.toISOString().split('T')[0].replace(/-/g, '');
+        
+        release.songs.forEach(song => {
+          icsContent += `BEGIN:VEVENT
+UID:${dateStr}-${song.replace(/\s+/g, '-').toLowerCase()}@journey-calendar.com
+DTSTART;VALUE=DATE:${dateStr}
+SUMMARY:🎵 ${song}
+DESCRIPTION:New release from "${release.phase}" phase
+CATEGORIES:Music,Release
+STATUS:CONFIRMED
+TRANSP:TRANSPARENT
+END:VEVENT
+
+`;
+        });
+      });
+
+      icsContent += 'END:VCALENDAR';
+      return icsContent;
+    }
+
+    function downloadCalendar(monthKey) {
+      const monthData = releaseData[monthKey];
+      if (!monthData) return;
+      
+      const icsContent = generateCalendar(monthData, monthKey);
+      const blob = new Blob([icsContent], { type: 'text/calendar' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `journey-${monthKey}.ics`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadFullCalendar() {
+      let fullIcsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//ALL YOU TALK ABOUT IS MONEY//Journey Calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:The Complete Musical Journey 2025-2026
+X-WR-CALDESC:Complete 32-week musical journey from September 2025 to April 2026
+
+`;
+
+      Object.entries(releaseData).forEach(([monthKey, monthData]) => {
+        const [month, year] = monthKey.split('-');
+        const monthIndex = {
+          'september': 8, 'october': 9, 'november': 10, 'december': 11,
+          'january': 0, 'february': 1, 'march': 2, 'april': 3
+        }[month];
+        
+        const yearNum = parseInt(year);
+        const adjustedYear = (month === 'january' || month === 'february' || month === 'march' || month === 'april') ? yearNum : yearNum;
+
+        monthData.forEach(release => {
+          const date = new Date(adjustedYear, monthIndex, release.date);
+          const dateStr = date.toISOString().split('T')[0].replace(/-/g, '');
+          
+          release.songs.forEach(song => {
+            fullIcsContent += `BEGIN:VEVENT
+UID:${dateStr}-${song.replace(/\s+/g, '-').toLowerCase()}@journey-calendar.com
+DTSTART;VALUE=DATE:${dateStr}
+SUMMARY:🎵 ${song}
+DESCRIPTION:New release from "${release.phase}" phase
+CATEGORIES:Music,Release,${release.phase.replace(/\s+/g, '')}
+STATUS:CONFIRMED
+TRANSP:TRANSPARENT
+END:VEVENT
+
+`;
+          });
+        });
+      });
+
+      fullIcsContent += 'END:VCALENDAR';
+      
+      const blob = new Blob([fullIcsContent], { type: 'text/calendar' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'complete-musical-journey-2025-2026.ics';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Add particle effects
+    function createParticle() {
+      const particle = document.createElement('div');
+      particle.style.cssText = `
+        position: fixed;
+        width: 2px;
+        height: 2px;
+        background: #ff0000;
+        pointer-events: none;
+        opacity: 0.7;
+        z-index: -1;
+        left: ${Math.random() * window.innerWidth}px;
+        top: ${window.innerHeight + 10}px;
+        animation: float-up ${3 + Math.random() * 4}s linear forwards;
+      `;
+      
+      document.body.appendChild(particle);
+      setTimeout(() => particle.remove(), 7000);
+    }
+
+    // Add CSS animation for particles
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes float-up {
+        to {
+          transform: translateY(-${window.innerHeight + 100}px) rotate(360deg);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Create particles periodically
+    setInterval(createParticle, 2000);
+
+    // Add glitch effect to title on hover
+    const title = document.querySelector('.hero h1');
+    title.addEventListener('mouseenter', () => {
+      title.style.animation = 'gradient-shift 0.1s ease-in-out infinite, glitch 0.5s ease-in-out';
+    });
+    title.addEventListener('mouseleave', () => {
+      title.style.animation = 'gradient-shift 3s ease-in-out infinite';
+    });
+
+    // Add glitch animation
+    const glitchStyle = document.createElement('style');
+    glitchStyle.textContent = `
+      @keyframes glitch {
+        0%, 100% { transform: translateX(0); }
+        20% { transform: translateX(-2px); }
+        40% { transform: translateX(2px); }
+        60% { transform: translateX(-1px); }
+        80% { transform: translateX(1px); }
+      }
+    `;
+    document.head.appendChild(glitchStyle);
+  </script>
+</body>
+</html>
